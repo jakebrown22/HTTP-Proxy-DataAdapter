@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:lang="http://www.springframework.org/schema/lang" 
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+       	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd  
+       	http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-3.1.xsd">
+    <context:component-scan base-package="com.jaspersoft.ji.ws.rest, com.jaspersoft.ji.jaxrs, com.jaspersoft.ji.adhoc.rest">
+        <!-- you can exclude here some services if you want: -->
+    </context:component-scan>
+	
+	<context:component-scan base-package="com.jaspersoft.ji.jaxrs.dbquery"/>
+	<bean id="serviceImpl" class="com.jaspersoft.jasperserver.remote.dbservices.impl.MetaDataServiceImpl"/>
+    <bean id="dbQueryExecutor" class="com.jaspersoft.ji.jaxrs.dbquery.DBQueryExecutorJaxrsService"/>
+	<bean id="BeanConnectionService" class="com.jaspersoft.jasperserver.remote.dbservices.impl.BeanConnectionServiceImpl"/>
+	<bean id="ExecuteQueryServiceImpl" class="com.jaspersoft.jasperserver.remote.dbservices.impl.ExecuteQueryServiceImpl">
+		<property name="maxRows" value="1000"/>
+		<property name="pageSize" value="1000"/>
+		<property name="fetchSize" value="1000"/>
+	</bean>
+	<bean id="ResourceCache" class="com.jaspersoft.jasperserver.util.ResourceCache"/>
+	
+    <bean id="restServiceRegistryPRO" class="com.jaspersoft.jasperserver.rest.MapRESTServiceRegistry"
+          parent="restServiceRegistryCE">
+        <property name="services">
+            <map merge="true">
+                <entry key="user" value-ref="restMTUser"/>
+                <entry key="organization" value-ref="restOrganization"/>
+                <entry key="jobsummary" value-ref="proJobSummary"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="publicOrganizationName" class="java.lang.String">
+        <constructor-arg type="java.lang.String" value="organizations"/>
+    </bean>
+
+    <util:set id="publicRoles">
+        <value>ROLE_ADMINISTRATOR</value>
+        <value>ROLE_USER</value>
+        <value>ROLE_ANONYMOUS</value>
+        <value>ROLE_DEMO</value>
+        <value>ROLE_SUPERMART_MANAGER</value>
+    </util:set>
+    <!-- metadataServiceFunctionFilter is a bean name that the MetadataService looks for to filter functions.
+    	 by default, it just points to domELMetadataHelper which provides a default filter.
+    	 you can override it to change the way things are filtered.
+      -->
+    <alias name="domELMetadataHelper" alias="metadataServiceFunctionFilter"/>
+
+
+
+
+</beans>
